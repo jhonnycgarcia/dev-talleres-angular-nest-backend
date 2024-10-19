@@ -6,10 +6,15 @@ import { JwtService } from '@nestjs/jwt';
 
 import { User } from './entities/user.entity';
 
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
-import { LoginDto } from './dto/login.dot';
+import {
+  CreateUserDto,
+  LoginDto,
+  SignUpDto,
+  UpdateAuthDto,
+} from './dto';
+
 import { JwtPayload } from './interfaces/jwt-payload';
+import { LoginResponse } from './interfaces/login-response';
 
 @Injectable()
 export class AuthService {
@@ -48,7 +53,7 @@ export class AuthService {
     }
   }
 
-  async login( loginDto: LoginDto): Promise<any> {
+  async login( loginDto: LoginDto): Promise<LoginResponse> {
     const { email, password } = loginDto;
 
     const user = await this.userModel.findOne({ email });
@@ -66,6 +71,14 @@ export class AuthService {
       user: rest,
       token: this.getJwtToken({ id: user.id })
     }
+  }
+
+  async register(signUpDto: SignUpDto): Promise<LoginResponse> {
+    const user =await this.create(signUpDto);
+    return { 
+      user,
+      token: this.getJwtToken({ id: user._id })
+    };
   }
 
   findAll() {
