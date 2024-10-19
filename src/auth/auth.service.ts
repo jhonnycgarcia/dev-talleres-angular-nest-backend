@@ -81,6 +81,12 @@ export class AuthService {
     };
   }
 
+  async findUserById(id: string): Promise<User> {
+    const user = await this.userModel.findById(id);
+    const { password: _, ...rest } = user.toJSON();
+    return rest;
+  }
+
   findAll(): Promise<User[]> {
     return this.userModel.find();
   }
